@@ -13,9 +13,7 @@ class webform_handler_relationship_webform_data extends views_handler_relationsh
   }
 
   function options_form(&$form, &$form_state) {
-
     $options = $this->_get_used_webform_components();
-
     $form['components'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Components'),

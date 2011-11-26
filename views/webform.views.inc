@@ -43,7 +43,7 @@ function webform_views_data() {
         'relationship' => array(
           'handler' => 'webform_handler_relationship_webform_data',
           'webform component type' => $component_type,
-          'base' => 'webform_submitted_data_'. $component_type,
+          'base' => 'webform_submitted_data',
           'base field' => 'sid',
           'label' => t('Submission Data'),
         ),
