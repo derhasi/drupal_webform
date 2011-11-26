@@ -33,6 +33,36 @@ function webform_views_data() {
     ),
   );
 
+  $component_types = webform_components();
+  foreach ($component_types as $component_type => $component_info) {
+      // data
+      $data['webform_submissions']['data_' . $component_type] = array(
+        'title' => t('Submission @component data', array('@component' => $component_type)),
+        'help' => t('The submitted data'),
+        'real field' => 'sid',
+        'relationship' => array(
+          'handler' => 'webform_handler_relationship_webform_data',
+          'webform component type' => $component_type,
+          'base' => 'webform_submitted_data_'. $component_type,
+          'base field' => 'sid',
+          'label' => t('Submission Data'),
+        ),
+      );
+      $data['webform_submitted_data_'. $component_type]['table']['group'] = t('Webform submitted data: @component', array('@component' => $component_type));
+      // is_draft
+      $data['webform_submitted_data_'. $component_type]['data'] = array(
+        'table' => 'webform_submitted_date',
+        'title' => t('Data field'),
+        'help' => t('Submission data.'),
+        'field' => array(
+          'handler' => 'views_handler_field_xss',
+        ),
+        'filter' => array(
+          'handler' => 'views_handler_filter_string',
+        ),
+      );
+   }
+
   // nid
   $data['webform_submissions']['nid'] = array(
     'title' => t('Node'),

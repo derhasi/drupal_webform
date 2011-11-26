@@ -7,6 +7,8 @@ configure = admin/config/content/webform
 
 ; Files that contain classes:
 files[] = includes/webform.export.inc
+; get input data
+files[] = views/webform_handler_relationship_webform_data.inc
 
 files[] = views/webform_handler_field_form_body.inc
 files[] = views/webform_handler_field_is_draft.inc
@@ -21,3 +23,10 @@ files[] = tests/components.test
 files[] = tests/permissions.test
 files[] = tests/submission.test
 files[] = tests/webform.test
+
+; Information added by drupal.org packaging script on 2011-09-27
+version = "7.x-3.x-dev"
+core = "7.x"
+project = "webform"
+datestamp = "1317084604"
+
