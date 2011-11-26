@@ -33,6 +33,7 @@ function webform_views_data() {
     ),
   );
 
+  // Each component type gets its own relation and a special field.
   $component_types = webform_components();
   foreach ($component_types as $component_type => $component_info) {
       // data
@@ -48,20 +49,38 @@ function webform_views_data() {
           'label' => t('Submission Data'),
         ),
       );
-      $data['webform_submitted_data_'. $component_type]['table']['group'] = t('Webform submitted data: @component', array('@component' => $component_type));
-      // is_draft
-      $data['webform_submitted_data_'. $component_type]['data'] = array(
+
+      // For each coponent type, we implement a custom field.
+      $data['webform_submitted_data']['data_'. $component_type] = array(
         'table' => 'webform_submitted_date',
-        'title' => t('Data field'),
-        'help' => t('Submission data.'),
+        'title' => t('@component data field', array('@component' => $component_type)),
+        'help' => t('The submitted data value for a component of type @component.', array('@component' => $component_type)),
+        'real field' => 'data',
         'field' => array(
           'handler' => 'views_handler_field_xss',
+          'webform component type' => $component_type,
         ),
         'filter' => array(
           'handler' => 'views_handler_filter_string',
+          'webform component type' => $component_type,
         ),
       );
    }
+
+   // Webform submission general data
+   $data['webform_submitted_data']['table']['group'] = t('Webform submission');
+   $data['webform_submitted_data']['data'] = array(
+      'table' => 'webform_submitted_data',
+      'title' => t('Data field (raw)'),
+      'help' => t('The submitted data value.'),
+      'real field' => 'data',
+      'field' => array(
+        'handler' => 'views_handler_field_xss',
+      ),
+      'filter' => array(
+        'handler' => 'views_handler_filter_string',
+      ),
+    );
 
   // nid
   $data['webform_submissions']['nid'] = array(
