@@ -161,11 +161,11 @@ function webform_views_data() {
       'help' => t('The data for a component of type %component in a webform submission.', array('%component' => $component_info['label'])),
       'real field' => 'data',
       'field' => array(
-        'handler' => 'views_handler_field_xss',
+        'handler' => 'webform_handler_field_webform_data',
         'webform component type' => $component_type,
       ),
       'filter' => array(
-        'handler' => 'views_handler_filter_string',
+        'handler' => 'webform_handler_filter_webform_data',
         'webform component type' => $component_type,
       ),
     );
