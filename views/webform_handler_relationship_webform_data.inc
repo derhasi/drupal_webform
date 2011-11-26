@@ -5,21 +5,6 @@
  */
 
 class webform_handler_relationship_webform_data extends views_handler_relationship  {
-  function init(&$view, &$options) {
-    parent::init($view, $options);
-    
-    // Convert legacy vids option to machine name vocabularies.
-    if (!empty($this->options['cids'])) {
-      $components = webform_components();
-      
-      
-      foreach ($this->options['cids'] as $cid) {
-        if (isset($components[$cid], $components[$cid]->machine_name)) {
-          $this->options['components'][$components[$cid]->machine_name] = $components[$cid]->machine_name;
-        }
-      }
-    }
-  }
 
   function option_definition() {
     $options = parent::option_definition();
@@ -28,7 +13,7 @@ class webform_handler_relationship_webform_data extends views_handler_relationsh
   }
 
   function options_form(&$form, &$form_state) {
-    
+
     $options = $this->_get_used_webform_components();
 
     $form['components'] = array(
@@ -41,7 +26,7 @@ class webform_handler_relationship_webform_data extends views_handler_relationsh
     );
     parent::options_form($form, $form_state);
   }
-  
+
   function _get_used_webform_components() {
     // Generate a lookup table of results.
       $component_type = $this->definition['webform component type'];
@@ -49,18 +34,18 @@ class webform_handler_relationship_webform_data extends views_handler_relationsh
       $query = db_select('webform_component', 'wc')
               ->fields('wc', array('cid', 'name', 'form_key'))
               ->condition('type', $component_type );
-      
+
       $result = $query->execute();
-      
+
       $components = array();
       foreach ($result as $data) {
         $components[$data->form_key] = check_plain("{$data->name} ({$data->form_key})");
       }
       return $components;
   }
-  
-  
-  
+
+
+
 
   /**
    * Called to implement a relationship in a query.
@@ -107,7 +92,7 @@ class webform_handler_relationship_webform_data extends views_handler_relationsh
 
     $this->alias = $this->query->add_relationship($alias, $join, 'taxonomy_term_data', $this->relationship);
   }
-  
+
   */
-  
+
 }
