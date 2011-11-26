@@ -33,55 +33,6 @@ function webform_views_data() {
     ),
   );
 
-  // Each component type gets its own relation and a special field.
-  $component_types = webform_components();
-  foreach ($component_types as $component_type => $component_info) {
-      // data
-      $data['webform_submissions']['data_' . $component_type] = array(
-        'title' => t('Submission @component data', array('@component' => $component_type)),
-        'help' => t('The submitted data'),
-        'real field' => 'sid',
-        'relationship' => array(
-          'handler' => 'webform_handler_relationship_webform_data',
-          'webform component type' => $component_type,
-          'base' => 'webform_submitted_data',
-          'base field' => 'sid',
-          'label' => t('Submission Data'),
-        ),
-      );
-
-      // For each coponent type, we implement a custom field.
-      $data['webform_submitted_data']['data_'. $component_type] = array(
-        'table' => 'webform_submitted_date',
-        'title' => t('@component data field', array('@component' => $component_type)),
-        'help' => t('The submitted data value for a component of type @component.', array('@component' => $component_type)),
-        'real field' => 'data',
-        'field' => array(
-          'handler' => 'views_handler_field_xss',
-          'webform component type' => $component_type,
-        ),
-        'filter' => array(
-          'handler' => 'views_handler_filter_string',
-          'webform component type' => $component_type,
-        ),
-      );
-   }
-
-   // Webform submission general data
-   $data['webform_submitted_data']['table']['group'] = t('Webform submission');
-   $data['webform_submitted_data']['data'] = array(
-      'table' => 'webform_submitted_data',
-      'title' => t('Data field (raw)'),
-      'help' => t('The submitted data value.'),
-      'real field' => 'data',
-      'field' => array(
-        'handler' => 'views_handler_field_xss',
-      ),
-      'filter' => array(
-        'handler' => 'views_handler_filter_string',
-      ),
-    );
-
   // nid
   $data['webform_submissions']['nid'] = array(
     'title' => t('Node'),
@@ -183,6 +134,56 @@ function webform_views_data() {
       'help' => t('Provide a simple link to delete the submission.'),
       'handler' => 'webform_handler_field_submission_link',
       'link_type' => 'delete',
+    ),
+  );
+
+
+  // Each component type gets its own relation and a special field.
+  $component_types = webform_components();
+  foreach ($component_types as $component_type => $component_info) {
+    // data
+    $data['webform_submissions']['data_' . $component_type] = array(
+      'title' => t('Submission @component data', array('@component' => $component_type)),
+      'help' => t('The submitted data'),
+      'real field' => 'sid',
+      'relationship' => array(
+        'handler' => 'webform_handler_relationship_webform_data',
+        'webform component type' => $component_type,
+        'base' => 'webform_submitted_data',
+        'base field' => 'sid',
+        'label' => t('Submission Data'),
+      ),
+    );
+
+    // For each coponent type, we implement a custom field.
+    $data['webform_submitted_data']['data_'. $component_type] = array(
+      'table' => 'webform_submitted_date',
+      'title' => t('@component data field', array('@component' => $component_type)),
+      'help' => t('The submitted data value for a component of type @component.', array('@component' => $component_type)),
+      'real field' => 'data',
+      'field' => array(
+        'handler' => 'views_handler_field_xss',
+        'webform component type' => $component_type,
+      ),
+      'filter' => array(
+        'handler' => 'views_handler_filter_string',
+        'webform component type' => $component_type,
+      ),
+    );
+  }
+
+  // Webform submission general data
+  $data['webform_submitted_data']['table']['group'] = t('Webform submission');
+  $data['webform_submitted_data']['data'] = array(
+    'table' => 'webform_submitted_data',
+    'title' => t('Data field (raw)'),
+    'help' => t('The submitted data value.'),
+    'real field' => 'data',
+    'field' => array(
+      'handler' => 'views_handler_field_xss',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
     ),
   );
 
