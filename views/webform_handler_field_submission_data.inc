@@ -34,6 +34,7 @@ class webform_handler_field_submission_data extends views_handler_field {
   function option_definition() {
     $options = parent::option_definition();
     $options['format'] = array('default' => 'html');
+    $options['display_label'] = array('default' => FALSE);
     return $options;
   }
 
@@ -50,7 +51,25 @@ class webform_handler_field_submission_data extends views_handler_field {
         'plain' => 'plain',
         '#required' => TRUE,
       ),
+      '#default_value' => $this->options['format'],
     );
+
+    // Title display settings.
+    $form['display_label'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Display label'),
+      '#default_value' => $this->options['display_label'],
+      '#description' => t('Show the label of the component as it is provied by webform.'),
+    );
+  }
+
+  /**
+   * Validate the options form to only allow relationship implementing the
+   * component type.
+   */
+  function options_validate(&$form, &$form_state) {
+    $i = 1;
+    $this->component_type;
   }
 
   /**
@@ -75,7 +94,13 @@ class webform_handler_field_submission_data extends views_handler_field {
       // @TODO: use a delta = 0 on every item?
       $delta = $this->get_value($row, 'no');
       $component = $this->component_instances["$nid:$cid"];
-      $format = 'html';
+
+      // Remove display label.
+      if (empty($this->options['display_label'])) {
+        $component['name'] = '';
+      }
+
+      $format = $this->options['format'];
       $render = webform_component_invoke($component['type'], 'display', $component, array($delta => $value), $format);
       return render($render);
     }
