@@ -8,7 +8,7 @@ configure = admin/config/content/webform
 ; Files that contain classes:
 files[] = includes/webform.export.inc
 files[] = views/webform_handler_relationship_webform_data.inc
-files[] = views/webform_handler_field_webform_data.inc
+files[] = views/webform_handler_field_submission_data.inc
 files[] = views/webform_handler_filter_webform_data.inc
 files[] = views/webform_handler_field_form_body.inc
 files[] = views/webform_handler_field_is_draft.inc
