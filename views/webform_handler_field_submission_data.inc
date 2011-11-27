@@ -11,7 +11,73 @@
  * @ingroup views_field_handlers
  */
 class webform_handler_field_submission_data extends views_handler_field {
-  function render($values) {
 
+  protected $component_instances;
+  protected $component_type;
+
+
+  /**
+   * Field constructor to provide default data.
+   */
+  function construct() {
+    parent::construct();
+    $this->additional_fields['nid'] = 'nid';
+    $this->additional_fields['cid'] = 'cid';
+    $this->additional_fields['no'] = 'no';
+
+    $this->component_type = $this->definition['webform component type'];
+  }
+
+  /**
+   * Definition and defaults for the option form/values.
+   */
+  function option_definition() {
+    $options = parent::option_definition();
+    $options['format'] = array('default' => 'html');
+    return $options;
+  }
+
+
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+
+    // Provide the selection for the display format.
+    $options['format'] = array(
+      '#type' => 'select',
+      '#title' => t('Display format'),
+      '#options' => array(
+        'html' => 'html',
+        'plain' => 'plain',
+        '#required' => TRUE,
+      ),
+    );
+  }
+
+  /**
+   * Pre render the query, to get the
+   */
+  function pre_render($values) {
+    $this->component_instances = webform_component_instances();
+    // @TODO: maybe we add a multi value pre query here?
+  }
+
+  /**
+   * Render the field.
+   *
+   * @param $row
+   *   The row retrieved
+   */
+  function render($row) {
+    $value = $this->get_value($row);
+    if (isset($value)) {
+      $nid = $this->get_value($row, 'nid');
+      $cid = $this->get_value($row, 'cid');
+      // @TODO: use a delta = 0 on every item?
+      $delta = $this->get_value($row, 'no');
+      $component = $this->component_instances["$nid:$cid"];
+      $format = 'html';
+      $render = webform_component_invoke($component['type'], 'display', $component, array($delta => $value), $format);
+      return render($render);
+    }
   }
 }

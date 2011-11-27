@@ -6,6 +6,8 @@
 
 class webform_handler_relationship_webform_data extends views_handler_relationship  {
 
+  protected $component_instances;
+
   function option_definition() {
     $options = parent::option_definition();
     $options['components'] = array('default' => array());
@@ -13,7 +15,8 @@ class webform_handler_relationship_webform_data extends views_handler_relationsh
   }
 
   function options_form(&$form, &$form_state) {
-    $options = $this->_get_used_webform_components();
+    parent::options_form($form, $form_state);
+    $options = $this->get_webform_component_instances();
     $form['components'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Components'),
@@ -21,28 +24,39 @@ class webform_handler_relationship_webform_data extends views_handler_relationsh
       '#default_value' => empty($this->options['components']) ? $options : $this->options['components'],
       '#description' => t('Choose which components you wish to relate. On no selection, all components are joined.'),
     );
-    parent::options_form($form, $form_state);
+
+    // @TODO: add delta selection.
   }
 
   /**
    * Retrieve a list of defined components for the given component type.
    *
-   * @TODO: add wrapper function in webform.module
+   * The function builds the $this->component_instances variable, with the full
+   * array data for a given instance. It outputs a flat array for usage in
+   * #options.
+   *
    * @TODO: cids are not really exportable
+   *
+   * @return array
+   *  array of component instances keyed by primary key "nid:cid" and with a
+   *  label as value.
    */
-  function _get_used_webform_components() {
-    // Generate a lookup table of results.
-    $component_type = $this->definition['webform component type'];
-    $query = db_select('webform_component', 'wc')
-            ->fields('wc', array('nid', 'cid', 'name', 'form_key'))
-            ->condition('type', $component_type );
+  function get_webform_component_instances() {
 
-    $result = $query->execute();
+    if (!isset($this->component_instances)) {
+      $component_type = $this->definition['webform component type'];
+      $components = webform_component_instances();
+      foreach ($components as $key => $component) {
+        if ($component['type'] == $component_type) {
+          $this->component_instances[$key] = $component;
+        }
+      }
+    }
 
     $components = array();
     foreach ($result as $data) {
       // Component primary key is (nid, cid).
-      $components["{$data->nid}:{$data->cid}"] = check_plain("{$data->name} ({$data->form_key})");
+      $components["{$data->nid}:{$data->cid}"] = check_plain("Webform {$data->nid}: {$data->name} ({$data->form_key})");
     }
     return $components;
   }
@@ -55,7 +69,7 @@ class webform_handler_relationship_webform_data extends views_handler_relationsh
   function query() {
 
     // On no selection, all components are joined.
-    $components = (empty($this->options['components'])) ? $this->_get_used_webform_components() : $this->options['components'];
+    $components = (empty($this->options['components'])) ? $this->get_webform_component_instances() : $this->options['components'];
 
     // Add the extra to the definition to filter on component ids.
     $this->definition['extra'] = array(
