@@ -149,7 +149,7 @@ function webform_views_data() {
       'help' => t('Relates to a webform submission data of component type @component.', array('@component' => $component_info['label'])),
       'real field' => 'sid',
       'relationship' => array(
-        'handler' => 'webform_handler_relationship_webform_data',
+        'handler' => 'webform_handler_relationship_submission_data',
         'webform component type' => $component_type,
         'base' => 'webform_submitted_data',
         'base field' => 'sid',
@@ -159,7 +159,6 @@ function webform_views_data() {
 
     // For each component type, we implement a custom field.
     $data['webform_submitted_data']['data_'. $component_type] = array(
-      'table' => 'webform_submitted_data',
       'title' => t('Data: @component', array('@component' => $component_info['label'])),
       'help' => t('The data for a component of type %component in a webform submission.', array('%component' => $component_info['label'])),
       'real field' => 'data',

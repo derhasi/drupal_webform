@@ -4,7 +4,7 @@
  * Views' relationship handlers.
  */
 
-class webform_handler_relationship_webform_data extends views_handler_relationship  {
+class webform_handler_relationship_submission_data extends views_handler_relationship  {
 
   protected $component_instances;
 
