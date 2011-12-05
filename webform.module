@@ -3280,7 +3280,7 @@ function webform_component_instances() {
               ->fields('wc')
               ->execute();
     while ($assoc = $query->fetchAssoc()) {
-      $key = "{$assoc['nid']}:{$assoc['cid']}";
+      $key = "{$assoc['nid']}-{$assoc['cid']}";
       $assoc['extra'] = unserialize($assoc['extra']);
       $instances[$key] = $assoc;
     }

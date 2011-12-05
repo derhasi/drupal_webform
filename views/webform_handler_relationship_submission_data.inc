@@ -10,22 +10,61 @@ class webform_handler_relationship_submission_data extends views_handler_relatio
 
   function option_definition() {
     $options = parent::option_definition();
+    $options['component_type'] = array('default' => NULL);
     $options['components'] = array('default' => array());
     return $options;
   }
 
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
-    $options = $this->get_webform_component_instances();
-    $form['components'] = array(
-      '#type' => 'checkboxes',
-      '#title' => t('Components'),
-      '#options' => $options,
-      '#default_value' => empty($this->options['components']) ? $options : $this->options['components'],
-      '#description' => t('Choose which components you wish to relate. On no selection, all components are joined.'),
+
+    $component_types = $this->get_webform_component_types();
+
+    $form['component_type'] = array(
+      '#title' => t('Component type'),
+      '#type' => 'select',
+      '#description' => t('Select component type for this relationship'),
+      '#required' => TRUE,
+      '#default_value' => $this->options['component_type'],
+      '#options' => $component_types,
     );
 
+    ctools_include('dependent');
+
+    foreach ($component_types as $type => $label) {
+      $id = drupal_html_id('options-components-'. $type);
+
+      $options = $this->get_webform_component_instances($type);
+      // If there are no isntances, we remove the component from selection.
+      if (empty($options)) {
+        unset($form['component_type']['#options'][$type]);
+        if ($form['component_type']['#default_value'] == $type) {
+          $form['component_type']['#default_value'] = NULL;
+        }
+      }
+      else {
+        $form['components'][$type] = array(
+          '#title' => t('Components: %label', array('%label' => $label)),
+          '#prefix' => '<div id="'. $id. '">',
+          '#suffix' => '</div>',
+          '#type' => 'checkboxes',
+          '#options' => $options,
+          '#default_value' => $this->options['components'],
+          '#dependency' => array('edit-options-component-type' => array($type)),
+          '#description' => t('Choose which components you wish to relate. On no selection, all components are joined.'),
+        );
+      }
+    }
+
     // @TODO: add delta selection.
+  }
+
+  function get_webform_component_types() {
+    $component_types = webform_components();
+    foreach ($component_types as $key => $component) {
+      $return[$key] = check_plain($component['label']);
+    }
+    return $return;
   }
 
   /**
@@ -41,22 +80,21 @@ class webform_handler_relationship_submission_data extends views_handler_relatio
    *  array of component instances keyed by primary key "nid:cid" and with a
    *  label as value.
    */
-  function get_webform_component_instances() {
+  function get_webform_component_instances($component_type = NULL) {
 
     if (!isset($this->component_instances)) {
-      $component_type = $this->definition['webform component type'];
       $components = webform_component_instances();
       foreach ($components as $key => $component) {
-        if ($component['type'] == $component_type) {
-          $this->component_instances[$key] = $component;
-        }
+        $this->component_instances[$key] = $component;
       }
     }
 
     $components = array();
     foreach ($this->component_instances as $data) {
-      // Component primary key is (nid, cid).
-      $components["{$data['nid']}:{$data['cid']}"] = check_plain("Webform {$data['nid']}: {$data['name']} ({$data['form_key']})");
+      if (!isset($component_type) || $data['type'] == $component_type) {
+        // Component primary key is (nid, cid).
+        $components["{$data['nid']}-{$data['cid']}"] = check_plain("Webform {$data['nid']}: {$data['name']} ({$data['form_key']})");
+      }
     }
     return $components;
   }
@@ -76,7 +114,7 @@ class webform_handler_relationship_submission_data extends views_handler_relatio
     $this->definition['extra'] = array(
       array(
         'table' => NULL,
-        'field' => "CONCAT(%alias.nid, ':', %alias.cid)",
+        'field' => "CONCAT(%alias.nid, '-', %alias.cid)",
         'value' => $components,
       ),
     );
