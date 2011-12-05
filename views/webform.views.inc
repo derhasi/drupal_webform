@@ -154,9 +154,9 @@ function webform_views_data() {
       ),
     );
 
-    // For each coponent type, we implement a custom field.
+    // For each component type, we implement a custom field.
     $data['webform_submitted_data']['data_'. $component_type] = array(
-      'table' => 'webform_submitted_date',
+      'table' => 'webform_submitted_data',
       'title' => t('Data: @component', array('@component' => $component_info['label'])),
       'help' => t('The data for a component of type %component in a webform submission.', array('%component' => $component_info['label'])),
       'real field' => 'data',

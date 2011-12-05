@@ -54,9 +54,9 @@ class webform_handler_relationship_webform_data extends views_handler_relationsh
     }
 
     $components = array();
-    foreach ($result as $data) {
+    foreach ($this->component_instances as $data) {
       // Component primary key is (nid, cid).
-      $components["{$data->nid}:{$data->cid}"] = check_plain("Webform {$data->nid}: {$data->name} ({$data->form_key})");
+      $components["{$data['nid']}:{$data['cid']}"] = check_plain("Webform {$data['nid']}: {$data['name']} ({$data['form_key']})");
     }
     return $components;
   }
@@ -69,7 +69,8 @@ class webform_handler_relationship_webform_data extends views_handler_relationsh
   function query() {
 
     // On no selection, all components are joined.
-    $components = (empty($this->options['components'])) ? $this->get_webform_component_instances() : $this->options['components'];
+    $components = isset($this->options['components']) ? array_filter($this->options['components']) : array();
+    $components = (empty($components)) ? array_keys($this->get_webform_component_instances()) : $components;
 
     // Add the extra to the definition to filter on component ids.
     $this->definition['extra'] = array(
