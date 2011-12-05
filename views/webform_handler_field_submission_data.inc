@@ -68,8 +68,14 @@ class webform_handler_field_submission_data extends views_handler_field {
    * component type.
    */
   function options_validate(&$form, &$form_state) {
-    $i = 1;
-    $this->component_type;
+    // Check if the selected relationship is valid for the component type.
+    $selected_relationship = $form_state['values']['options']['relationship'];
+    $relationships = $this->view->display_handler->get_option('relationships');
+    if (empty($relationships[$selected_relationship])
+        || $relationships[$selected_relationship]['table'] != 'webform_submissions'
+        || $relationships[$selected_relationship]['field'] != 'data_'. $this->component_type) {
+      form_set_error('options][relationship', t('The selected relationship is not valid for the given webform component data type.'));
+    }
   }
 
   /**
