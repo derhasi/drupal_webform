@@ -295,6 +295,10 @@ function webform_views_handlers() {
         'parent' => 'views_handler_field',
         'file' => 'webform_handler_field_submission_link.inc',
       ),
+      'webform_handler_field_submission_data' => array(
+        'parent' => 'views_handler_field',
+        'file' => 'webform_handler_field_submission_data.inc',
+      ),
       'webform_handler_field_submission_count' => array(
         'parent' => 'views_handler_field',
         'file' => 'webform_handler_field_submission_count.inc',
@@ -316,6 +320,10 @@ function webform_views_handlers() {
       'webform_handler_filter_is_draft' => array(
         'parent' => 'views_handler_filter_in_operator',
         'file' => 'webform_handler_filter_is_draft.inc',
+      ),
+      'webform_handler_relationship_submission_data' => array(
+        'parent' => 'views_handler_relationship',
+        'file' => 'webform_handler_relationship_submission_data.inc',
       ),
     ),
   );
