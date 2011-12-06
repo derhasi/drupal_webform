@@ -160,6 +160,9 @@ function webform_views_data() {
     'title' => t('Data field (raw)'),
     'help' => t('The submitted data value as raw output string.'),
     'real field' => 'data',
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
     'field' => array(
       'handler' => 'views_handler_field_xss',
     ),
@@ -185,6 +188,9 @@ function webform_views_data() {
     'title' => t('Delta'),
     'help' => t('The delta value of the submitted data in a multi value component.'),
     'real field' => 'no',
+    'argument' => array(
+      'handler' => 'views_handler_argument_numeric',
+    ),
     'field' => array(
       'handler' => 'views_handler_field_numeric',
     ),
