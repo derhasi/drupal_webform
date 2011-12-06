@@ -15,6 +15,9 @@ class webform_handler_relationship_submission_data extends views_handler_relatio
     return $options;
   }
 
+  /**
+   * Extends the relationship options form.
+   */
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
 
@@ -30,7 +33,6 @@ class webform_handler_relationship_submission_data extends views_handler_relatio
     );
 
     ctools_include('dependent');
-
     foreach ($component_types as $type => $label) {
       $id = drupal_html_id('options-components-'. $type);
 
@@ -59,6 +61,12 @@ class webform_handler_relationship_submission_data extends views_handler_relatio
     // @TODO: add delta selection.
   }
 
+  /**
+   * Retrieve a option list of defined component types.
+   *
+   * @return array
+   *   array of componen types (key: type, value: label)
+   */
   function get_webform_component_types() {
     $component_types = webform_components();
     foreach ($component_types as $key => $component) {
@@ -100,15 +108,35 @@ class webform_handler_relationship_submission_data extends views_handler_relatio
   }
 
   /**
+   * Retrieves the selected components of the selected component type.
+   */
+  function get_selected_component_instances() {
+    // Get instances for the selected component type only.
+    if (!empty($this->options['component_type'])) {
+      $type = $this->options['component_type'];
+      // Fall back to all if there was no specific instance selected.
+      if (!isset($this->options['components'][$type]) || count(array_filter($this->options['components'][$type])) == 0) {
+        $components = array_keys($this->get_webform_component_instances($this->options['component_type']));
+      }
+      else {
+        $components = array_filter($this->options['components'][$type]);
+      }
+    }
+    // No components.
+    else {
+      $components = array();
+    }
+    return $components;
+  }
+
+
+  /**
    * Called to implement a relationship in a query.
    *
-   * I respects the given component ids, provided via options form.
+   * It respects the given component ids, provided via options form.
    */
   function query() {
-
-    // On no selection, all components are joined.
-    $components = isset($this->options['components']) ? array_filter($this->options['components']) : array();
-    $components = (empty($components)) ? array_keys($this->get_webform_component_instances()) : $components;
+    $components = $this->get_selected_component_instances();
 
     // Add the extra to the definition to filter on component ids.
     $this->definition['extra'] = array(
