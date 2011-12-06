@@ -180,7 +180,21 @@ function webform_views_data() {
     ),
   );
 
-  // @TODO: delta filter, sort.
+  // For each component type, we implement a custom field.
+  $data['webform_submitted_data']['no'] = array(
+    'title' => t('Delta'),
+    'help' => t('The delta value of the submitted data in a multi value component.'),
+    'real field' => 'no',
+    'field' => array(
+      'handler' => 'views_handler_field_numeric',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_numeric',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+  );
 
   return $data;
 }
