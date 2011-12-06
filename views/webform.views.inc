@@ -178,9 +178,6 @@ function webform_views_data() {
     'field' => array(
       'handler' => 'webform_handler_field_submission_data',
     ),
-    'filter' => array(
-      'handler' => 'webform_handler_filter_submission_data',
-    ),
   );
 
   // @TODO: delta filter, sort.
