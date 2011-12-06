@@ -24,8 +24,6 @@ class webform_handler_field_submission_data extends views_handler_field {
     $this->additional_fields['nid'] = 'nid';
     $this->additional_fields['cid'] = 'cid';
     $this->additional_fields['no'] = 'no';
-
-    $this->component_type = $this->definition['webform component type'];
   }
 
   /**
@@ -64,21 +62,6 @@ class webform_handler_field_submission_data extends views_handler_field {
   }
 
   /**
-   * Validate the options form to only allow relationship implementing the
-   * component type.
-   */
-  function options_validate(&$form, &$form_state) {
-    // Check if the selected relationship is valid for the component type.
-    $selected_relationship = $form_state['values']['options']['relationship'];
-    $relationships = $this->view->display_handler->get_option('relationships');
-    if (empty($relationships[$selected_relationship])
-        || $relationships[$selected_relationship]['table'] != 'webform_submissions'
-        || $relationships[$selected_relationship]['field'] != 'data_'. $this->component_type) {
-      form_set_error('options][relationship', t('The selected relationship is not valid for the given webform component data type.'));
-    }
-  }
-
-  /**
    * Pre render the query, to get the
    */
   function pre_render($values) {
@@ -99,7 +82,7 @@ class webform_handler_field_submission_data extends views_handler_field {
       $cid = $this->get_value($row, 'cid');
       // @TODO: use a delta = 0 on every item?
       $delta = $this->get_value($row, 'no');
-      $component = $this->component_instances["$nid:$cid"];
+      $component = $this->component_instances["$nid-$cid"];
 
       // Remove display label.
       if (empty($this->options['display_label'])) {
@@ -108,6 +91,7 @@ class webform_handler_field_submission_data extends views_handler_field {
 
       $format = $this->options['format'];
       $render = webform_component_invoke($component['type'], 'display', $component, array($delta => $value), $format);
+      // @TODO: add a theme layer?
       return render($render);
     }
   }
